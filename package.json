@@ -22,7 +22,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "dev": "concurrently \"node api/server.js\" \"set PORT=3100 && react-scripts start\"",
+    "dev": "concurrently \"node -r dotenv/config api/server.js dotenv_config_silent=true dotenv_config_path=.env.local\" \"set PORT=3100 && react-scripts start\"",
     "react": "react-scripts start",
     "start": "node api/server.js",
     "build": "react-scripts build",

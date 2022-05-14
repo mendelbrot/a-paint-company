@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import express from 'express'
 import path, { join } from 'path'
 import routes from './routes/index.js'
@@ -25,14 +24,13 @@ if (STAGE == 'dev') {
   })
 }
 
-
 // serve api
 app.use('/api', routes)
 
 // serve frontend static resources
-app.use(express.static(join(__dirname, '../build')))
+app.use(express.static(join(__dirname, 'build')))
 app.get('/*', function (req, res) {
-  res.sendFile(join(__dirname, '../build', 'index.html'))
+  res.sendFile(join(__dirname, 'build', 'index.html'))
 })
 
 app.listen(port, () => {
