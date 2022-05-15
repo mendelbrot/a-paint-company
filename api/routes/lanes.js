@@ -6,8 +6,6 @@ const GET = async (req, res) => {
   try {
     const paints = await db.collection('paints').find().toArray()
     const settings = await db.collection('settings').findOne()
-    console.log(paints)
-    console.log(settings)
     
     // construct the lanes so that they include the paints that fall in their slot
     const lanes = settings.swim_lanes.map(lane => {

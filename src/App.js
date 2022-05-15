@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
 } from 'react-router-dom'
-import Test from 'pages/Test'
+import Edit from 'pages/Edit'
 import Home from 'pages/Home'
 
 
@@ -13,7 +13,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/edit" element={<Edit />} />
       </Routes>
     </Router>
   )
