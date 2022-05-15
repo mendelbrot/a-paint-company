@@ -28,7 +28,7 @@ function Home(props) {
     return (
       <Box>
         <Box>
-          <Box p={4} border='1px'>
+          <Box p={4}>
             <Stack direction='row' spacing={4} align='center'>
               <Button colorScheme='teal' variant='solid' onClick={refresh}>
                 Refresh
@@ -39,9 +39,9 @@ function Home(props) {
             </Stack>
           </Box>
         </Box>
-        <Box p={4} border='1px'>
+        <Box p={4}>
           <Stack direction={{ base: 'column', sm:'row'}} spacing={4} align='front'>
-            {data.map(lane => <LaneCard key={lane._id} lane={lane} />)}
+            {data.map(lane => <LaneCard key={lane.name} lane={lane} />)}
           </Stack>
         </Box>
       </Box>
@@ -58,7 +58,7 @@ function Home(props) {
 Home.propTypes = {
   loading: PropTypes.bool.isRequired,
   error: PropTypes.string,
-  data: PropTypes.object,
+  data: PropTypes.array,
   refresh: PropTypes.func.isRequired
 }
 

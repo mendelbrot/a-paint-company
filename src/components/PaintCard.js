@@ -1,15 +1,15 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import { Box } from '@chakra-ui/react'
+import { Box, Heading, Stack } from '@chakra-ui/react'
 
 function PaintCard(props) {
   const { paint } = props
 
   return (
-    <Box p={4} border='1px' rounded='lg'>
-      <Box>{paint.colour}</Box>
+    <Stack p={2} border='1px' rounded='lg'>
+      <Heading size='md'>{paint.colour}</Heading>
       <Box>{paint.qty}</Box>
-    </Box>
+    </Stack>
   )
 }
 
