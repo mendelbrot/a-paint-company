@@ -15,7 +15,7 @@ const POST = async (req, res) => {
 // list of all
 const GET = async (req, res) => {
   try {
-    const data = await db.collection('paints').find().toArray()
+    const data = await db.collection('paints').find().sort({ 'colour': 1 }).toArray()
     res.json(data)
   } catch (error) {
     res.status(500).send(error?.message)
