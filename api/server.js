@@ -1,16 +1,20 @@
 import express from 'express'
+// import bodyParser from 'body-parser'
 import path, { join } from 'path'
 import routes from './routes/index.js'
 import { dbConnectionOpen } from './lib/mongo.js'
 const app = express()
-const port = process.env.PORT || 9000
-const __dirname = path.resolve()
+app.use(express.json())
+// app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json())
+const dir = path.resolve()
 
 const {
-  STAGE
+  STAGE,
+  PORT = 9000
 } = process.env
 
-// open a connection with mongodb
+// create a mongodb client
 dbConnectionOpen()
 
 // allow CORS in dev
@@ -24,17 +28,22 @@ if (STAGE == 'dev') {
   })
 }
 
+app.post(
+  '/test',
+  (req, res) => res.json(req.body)
+)
+
 // serve api
 app.use('/api', routes)
 
 // serve frontend static resources
-app.use(express.static(join(__dirname, 'build')))
+app.use(express.static(join(dir, 'build')))
 app.get('/*', function (req, res) {
-  res.sendFile(join(__dirname, 'build', 'index.html'))
+  res.sendFile(join(dir, 'build', 'index.html'))
 })
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`)
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`)
 })
 
 

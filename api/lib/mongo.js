@@ -7,10 +7,13 @@ const {
 
 const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
-export let dbConnection
+// the database to query on
+export let db
 
+// the function to initiate the database connection
 export const dbConnectionOpen = () => client.connect(() => {
-  dbConnection = client.db(MONGO_DB)
+  db = client.db(MONGO_DB)
 })
+
 
 export default client
