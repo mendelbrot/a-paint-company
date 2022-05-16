@@ -10,7 +10,6 @@ import {
 
 function PaintEditRow(props) {
   const { paint, handleLineQtyChange } = props
-  // const [qty, setQty] = React.useState(paint.qty)
 
   return (
     <Stack p={2} direction='row' border='1px' rounded='lg'>

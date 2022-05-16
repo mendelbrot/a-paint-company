@@ -18,7 +18,6 @@ function withData(path, WrappedComponent) {
       if (path) {
         fetch(REACT_APP_API_URL + path)
           .then(async (res) => {
-            // console.log(res)
             const status = res.status
             const contentType = res.headers.get('content-type')
             console.log(contentType)
