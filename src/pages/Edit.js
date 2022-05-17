@@ -6,9 +6,16 @@ import {
 } from 'react-router-dom'
 import withData from 'components/withData'
 import EditRow from 'components/EditRow'
-import { Box, Text, Button, Stack, Heading } from '@chakra-ui/react'
+import {
+  Box,
+  Text,
+  Button,
+  Stack,
+  Heading
+} from '@chakra-ui/react'
 import ButtonRow from 'components/ButtonRow'
 import SpinnerBox from 'components/SpinnerBox'
+import NewPaintModal from 'components/NewPaintModal'
 
 const {
   REACT_APP_API_URL
@@ -23,7 +30,7 @@ function Edit(props) {
     if (error) {
       return (
         <Box>
-          <Text color='red'>Error Loading data</Text>
+          <Text color='red'>Error Loading data:</Text>
           <Text color='red'>{error}</Text>
         </Box>
       )
@@ -62,12 +69,12 @@ function Edit(props) {
       .then(response => {
         if (response.status != 200) {
           window.alert('Error saving data.  Status: ' + response.status)
-        } else {
-          navigate('/')
         }
-      }).catch(error => {
-        window.alert('Error ' + error?.message)
       })
+      .catch(error => {
+        window.alert('Error: ' + error?.message)
+      })
+      .finally(() => { navigate('/') })
   }
 
   const handleLineQtyChange = R.curry((index, value) => {
@@ -89,9 +96,9 @@ function Edit(props) {
       </Box>
       <Box paddingTop={4}>
         <ButtonRow>
-          <Button colorScheme='green' variant='solid' onClick={() => navigate('/')}>
-            + More Colours
-          </Button>
+          <NewPaintModal
+            formData={formData}
+          />
         </ButtonRow>
       </Box>
       <Box paddingTop={4}>
@@ -99,10 +106,19 @@ function Edit(props) {
       </Box>
       <Box paddingTop={4}>
         <ButtonRow>
-          <Button colorScheme='green' variant='solid' onClick={() => navigate('/')}>
+          <Button
+            colorScheme='green'
+            variant='solid'
+            onClick={() => navigate('/')}
+          >
             Cancel
           </Button>
-          <Button colorScheme='green' variant='outline' onClick={handleSave}>
+          <Button
+            colorScheme='green'
+            variant='outline'
+            onClick={handleSave}
+            isDisabled={!formData}
+          >
             Save
           </Button>
         </ButtonRow>

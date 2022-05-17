@@ -4,8 +4,8 @@ import {
   useNavigate
 } from 'react-router-dom'
 import withData from 'components/withData'
-import { Box, IconButton, Text, Button } from '@chakra-ui/react'
-import { RepeatIcon } from '@chakra-ui/icons'
+import { Box, IconButton, Text } from '@chakra-ui/react'
+import { RepeatIcon, EditIcon } from '@chakra-ui/icons'
 import LaneCard from 'components/LaneCard'
 import ButtonRow from 'components/ButtonRow'
 import KanbanStack from 'components/KanbanStack'
@@ -19,7 +19,7 @@ function Home(props) {
     if (error) {
       return (
         <Box>
-          <Text color='red'>Error Loading data</Text>
+          <Text color='red'>Error Loading data:</Text>
           <Text color='red'>{error}</Text>
         </Box>
       )
@@ -49,14 +49,13 @@ function Home(props) {
           aria-label='Refresh'
           icon={<RepeatIcon />}
         />
-        <Button
-          colorScheme='teal'
+        <IconButton
+          icon={<EditIcon />}
+          colorScheme='green'
           variant='outline'
           isDisabled={!data}
           onClick={() => navigate('/edit')}
-        >
-          Edit Inventory
-        </Button>
+        />
       </ButtonRow>
       <Box paddingTop={4}>
         <MainSection />

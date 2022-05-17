@@ -20,7 +20,6 @@ function withData(path, WrappedComponent) {
           .then(async (res) => {
             const status = res.status
             const contentType = res.headers.get('content-type')
-            console.log(contentType)
             const isJson = contentType?.includes('application/json')
             const dat = isJson ? await res.json() : null
             if (status !== 200) {
