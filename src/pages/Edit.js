@@ -5,17 +5,51 @@ import {
   useNavigate
 } from 'react-router-dom'
 import withData from 'components/withData'
-import PaintEditRow from 'components/PaintEditRow'
-import { Box, Button, Stack, Heading } from '@chakra-ui/react'
+import EditRow from 'components/EditRow'
+import { Box, Text, Button, Stack, Heading } from '@chakra-ui/react'
+import ButtonRow from 'components/ButtonRow'
+import SpinnerBox from 'components/SpinnerBox'
 
 const {
   REACT_APP_API_URL
 } = process.env
 
 function Edit(props) {
-  const { loading, error, data } = props
+  const { error, data } = props
   const navigate = useNavigate()
   const [formData, setFormData] = React.useState(data)
+
+  const MainSection = () => {
+    if (error) {
+      return (
+        <Box>
+          <Text color='red'>Error Loading data</Text>
+          <Text color='red'>{error}</Text>
+        </Box>
+      )
+    }
+
+    if (formData) {
+      return (
+        <Stack>
+          {formData.map((paint, index) =>
+            <EditRow
+              key={paint._id}
+              paint={paint}
+              paintIndex={index}
+              handleLineQtyChange={handleLineQtyChange(index)}
+            />
+          )}
+        </Stack>
+      )
+    }
+
+    return (
+      <Box>
+        <SpinnerBox />
+      </Box>
+    )
+  }
 
   function handleSave() {
     fetch(REACT_APP_API_URL + '/paints', {
@@ -48,49 +82,33 @@ function Edit(props) {
   }, [data])
 
 
-  if (loading) {
-    return (
-      <div>Loading...</div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div>{error}</div>
-    )
-  }
-
-  if (formData) {
-    return (
-      <Box>
-        <Box p={4}>
-          <Heading size='lg'>Edit Paints Inventory</Heading>
-        </Box>
-        <Box p={4}>
-          <Stack>
-            {formData.map((paint, index) =>
-              <PaintEditRow
-                key={paint._id}
-                paint={paint}
-                paintIndex={index}
-                handleLineQtyChange={handleLineQtyChange(index)}
-              />
-            )}
-          </Stack>
-        </Box>
-        <Box p={4}>
-          <Stack direction='row' spacing={4} align='center'>
-            <Button colorScheme='green' variant='solid' onClick={() => navigate('/')}>
-              Cancel
-            </Button>
-            <Button colorScheme='green' variant='outline' onClick={handleSave}>
-              Save
-            </Button>
-          </Stack>
-        </Box>
+  return (
+    <Box p={4}>
+      <Box >
+        <Heading size='lg'>Edit Paints Inventory</Heading>
       </Box>
-    )
-  }
+      <Box paddingTop={4}>
+        <ButtonRow>
+          <Button colorScheme='green' variant='solid' onClick={() => navigate('/')}>
+            + More Colours
+          </Button>
+        </ButtonRow>
+      </Box>
+      <Box paddingTop={4}>
+        <MainSection />
+      </Box>
+      <Box paddingTop={4}>
+        <ButtonRow>
+          <Button colorScheme='green' variant='solid' onClick={() => navigate('/')}>
+            Cancel
+          </Button>
+          <Button colorScheme='green' variant='outline' onClick={handleSave}>
+            Save
+          </Button>
+        </ButtonRow>
+      </Box>
+    </Box>
+  )
 }
 
 Edit.propTypes = {

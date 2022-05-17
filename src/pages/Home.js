@@ -1,57 +1,67 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import {
-  Link,
   useNavigate
 } from 'react-router-dom'
 import withData from 'components/withData'
-import { Box, Button, Stack } from '@chakra-ui/react'
+import { Box, IconButton, Text, Button } from '@chakra-ui/react'
+import { RepeatIcon } from '@chakra-ui/icons'
 import LaneCard from 'components/LaneCard'
+import ButtonRow from 'components/ButtonRow'
+import KanbanStack from 'components/KanbanStack'
+import SpinnerBox from 'components/SpinnerBox'
 
 function Home(props) {
-  const { loading, error, data, refresh } = props
+  const { error, data, refresh } = props
   const navigate = useNavigate()
 
-  if (loading) {
-    return (
-      <div>Loading...</div>
-    )
-  }
+  const MainSection = () => {
+    if (error) {
+      return (
+        <Box>
+          <Text color='red'>Error Loading data</Text>
+          <Text color='red'>{error}</Text>
+        </Box>
+      )
+    }
 
-  if (error) {
-    return (
-      <div>{error}</div>
-    )
-  }
+    if (data) {
+      return (
+        <KanbanStack>
+          {data.map(lane => <LaneCard key={lane.name} lane={lane} />)}
+        </KanbanStack>
+      )
+    }
 
-  if (data) {
     return (
       <Box>
-        <Box>
-          <Box p={4}>
-            <Stack direction='row' spacing={4} align='center'>
-              <Button colorScheme='teal' variant='solid' onClick={refresh}>
-                Refresh
-              </Button>
-              <Button colorScheme='teal' variant='outline' onClick={() => navigate('/edit')}>
-                Edit Inventory
-              </Button>
-            </Stack>
-          </Box>
-        </Box>
-        <Box p={4}>
-          <Stack direction={{ base: 'column', sm:'row'}} spacing={4} align='front'>
-            {data.map(lane => <LaneCard key={lane.name} lane={lane} />)}
-          </Stack>
-        </Box>
+        <SpinnerBox />
       </Box>
     )
   }
 
   return (
-    <Link to="/edit">Test</Link>
-
-    
+    <Box p={4}>
+      <ButtonRow>
+        <IconButton
+          colorScheme='green'
+          onClick={refresh}
+          aria-label='Refresh'
+          icon={<RepeatIcon />}
+        />
+        <Button
+          colorScheme='teal'
+          variant='outline'
+          isDisabled={!data}
+          onClick={() => navigate('/edit')}
+        >
+          Edit Inventory
+        </Button>
+      </ButtonRow>
+      <Box paddingTop={4}>
+        <MainSection />
+      </Box>
+    </Box>
   )
 }
 
