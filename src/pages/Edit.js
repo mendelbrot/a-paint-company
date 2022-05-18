@@ -45,6 +45,7 @@ function Edit(props) {
               paint={paint}
               paintIndex={index}
               handleLineQtyChange={handleLineQtyChange(index)}
+              refresh={refresh}
             />
           )}
         </Stack>

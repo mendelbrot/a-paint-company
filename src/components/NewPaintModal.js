@@ -1,8 +1,5 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
-// import {
-//   useNavigate
-// } from 'react-router-dom'
 import {
   Box,
   Button,
@@ -37,7 +34,6 @@ const {
 function NewPaintModal(props) {
   const { formData, refresh } = props
   const { isOpen, onOpen, onClose } = useDisclosure()
-  // const navigate = useNavigate()
   const [paint, setPaint] = React.useState({ qty: 0, colour: '' })
   
   const nameTakenError = formData && formData.map((p) => p.colour).includes(paint.colour)
@@ -62,11 +58,11 @@ function NewPaintModal(props) {
     })
       .then(response => {
         if (response.status != 200) {
-          window.alert('Error saving data.  Status: ' + response.status)
+          window.alert('Error saving.  Status: ' + response.status)
         }
       })
       .catch(error => {
-        window.alert('Error saving data: ' + error?.message)
+        window.alert('Error saving: ' + error?.message)
       })
       .finally(() => {
         onClose()

@@ -5,17 +5,16 @@ import {
   Heading,
   Flex,
   Spacer,
-  IconButton,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from '@chakra-ui/react'
-import { DeleteIcon } from '@chakra-ui/icons'
+import DeletePaintDialog from 'components/DeletePaintDialog'
 
 function EditRow(props) {
-  const { paint, handleLineQtyChange } = props
+  const { paint, handleLineQtyChange, refresh } = props
 
   return (
     <Box maxWidth={600}>
@@ -26,13 +25,9 @@ function EditRow(props) {
         rounded='lg'
         align='center'
       >
-        <IconButton
-          size='xs'
-          colorScheme='red'
-          onClick={() => {}}
-          aria-label='Refresh'
-          icon={<DeleteIcon />}
-          marginRight={4}
+        <DeletePaintDialog
+          paint={paint}
+          refresh={refresh}
         />
         <Heading size='md'>{paint.colour}</Heading>
         <Spacer />
@@ -56,6 +51,7 @@ function EditRow(props) {
 EditRow.propTypes = {
   paint: PropTypes.object.isRequired,
   handleLineQtyChange: PropTypes.func.isRequired,
+  refresh: PropTypes.func.isRequired,
 }
 
 export default EditRow
