@@ -22,7 +22,7 @@ const {
 } = process.env
 
 function Edit(props) {
-  const { error, data } = props
+  const { error, data, refresh } = props
   const navigate = useNavigate()
   const [formData, setFormData] = React.useState(data)
 
@@ -98,6 +98,7 @@ function Edit(props) {
         <ButtonRow>
           <NewPaintModal
             formData={formData}
+            refresh={refresh}
           />
         </ButtonRow>
       </Box>
@@ -130,7 +131,8 @@ function Edit(props) {
 Edit.propTypes = {
   loading: PropTypes.bool.isRequired,
   error: PropTypes.string,
-  data: PropTypes.array
+  data: PropTypes.array,
+  refresh: PropTypes.func
 }
 
 export default withData('/paints', Edit)

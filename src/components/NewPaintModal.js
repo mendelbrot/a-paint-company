@@ -1,8 +1,8 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import {
-  useNavigate
-} from 'react-router-dom'
+// import {
+//   useNavigate
+// } from 'react-router-dom'
 import {
   Box,
   Button,
@@ -35,9 +35,9 @@ const {
 } = process.env
 
 function NewPaintModal(props) {
-  const { formData } = props
+  const { formData, refresh } = props
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [paint, setPaint] = React.useState({ qty: 0, colour: '' })
   
   const nameTakenError = formData && formData.map((p) => p.colour).includes(paint.colour)
@@ -53,7 +53,6 @@ function NewPaintModal(props) {
   }
 
   function handleSave() {
-    console.log(paint)
     fetch(REACT_APP_API_URL + '/paints', {
       method: 'POST',
       body: JSON.stringify([paint]),
@@ -62,7 +61,6 @@ function NewPaintModal(props) {
       }
     })
       .then(response => {
-        window.alert(JSON.stringify(paint))
         if (response.status != 200) {
           window.alert('Error saving data.  Status: ' + response.status)
         }
@@ -72,7 +70,8 @@ function NewPaintModal(props) {
       })
       .finally(() => {
         onClose()
-        navigate('/edit')
+        clearEntry()
+        refresh()
       })
   }
 
@@ -160,7 +159,8 @@ function NewPaintModal(props) {
 }
 
 NewPaintModal.propTypes = {
-  formData: PropTypes.array
+  formData: PropTypes.array,
+  refresh: PropTypes.func
 }
 
 export default NewPaintModal
