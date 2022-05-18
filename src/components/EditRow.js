@@ -14,7 +14,13 @@ import {
 import DeletePaintDialog from 'components/DeletePaintDialog'
 
 function EditRow(props) {
-  const { paint, handleLineQtyChange, refresh } = props
+  const {
+    paint,
+    handleLineQtyChange,
+    refresh,
+    qty,
+    highlightQty
+  } = props
 
   return (
     <Box maxWidth={600}>
@@ -34,11 +40,15 @@ function EditRow(props) {
         <NumberInput
           precision={0}
           min={0}
-          value={paint.qty}
+          value={qty}
           onChange={(value) => handleLineQtyChange(value)}
         >
-          <NumberInputField />
-          <NumberInputStepper>
+          <NumberInputField
+            backgroundColor={highlightQty ? 'lightYellow' : 'white'}
+          />
+          <NumberInputStepper
+            backgroundColor='white'
+          >
             <NumberIncrementStepper />
             <NumberDecrementStepper />
           </NumberInputStepper>
@@ -50,8 +60,10 @@ function EditRow(props) {
 
 EditRow.propTypes = {
   paint: PropTypes.object.isRequired,
+  qty: PropTypes.number.isRequired,
+  highlightQty: PropTypes.bool.isRequired,
   handleLineQtyChange: PropTypes.func.isRequired,
-  refresh: PropTypes.func.isRequired,
+  refresh: PropTypes.func.isRequired
 }
 
 export default EditRow

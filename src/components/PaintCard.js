@@ -6,7 +6,12 @@ function PaintCard(props) {
   const { paint } = props
 
   return (
-    <Stack p={2} border='1px' rounded='lg' backgroundColor='lightYellow'>
+    <Stack
+      p={2}
+      border='1px'
+      rounded='lg'
+      backgroundColor='aliceBlue'
+    >
       <Heading size='md'>{paint.colour}</Heading>
       <Text>{paint.qty}</Text>
     </Stack>

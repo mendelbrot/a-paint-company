@@ -24,45 +24,13 @@ const {
 function Edit(props) {
   const { error, data, refresh } = props
   const navigate = useNavigate()
-  const [formData, setFormData] = React.useState(data)
 
-  const MainSection = () => {
-    if (error) {
-      return (
-        <Box>
-          <Text color='red'>Error Loading data:</Text>
-          <Text color='red'>{error}</Text>
-        </Box>
-      )
-    }
-
-    if (formData) {
-      return (
-        <Stack>
-          {formData.map((paint, index) =>
-            <EditRow
-              key={paint._id}
-              paint={paint}
-              paintIndex={index}
-              handleLineQtyChange={handleLineQtyChange(index)}
-              refresh={refresh}
-            />
-          )}
-        </Stack>
-      )
-    }
-
-    return (
-      <Box>
-        <SpinnerBox />
-      </Box>
-    )
-  }
+  const [changesInProgresss, setChangesInProgresss] = React.useState({}) 
 
   function handleSave() {
     fetch(REACT_APP_API_URL + '/paints', {
       method: 'PUT',
-      body: JSON.stringify(formData),
+      body: JSON.stringify(Object.values(changesInProgresss)),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -78,17 +46,67 @@ function Edit(props) {
       .finally(() => { navigate('/') })
   }
 
-  const handleLineQtyChange = R.curry((index, value) => {
-    console.log(value, index)
-    let newData = [...data]
-    newData[index].qty = Number.parseInt(value) || 0
-    setFormData(newData)
+  const handleLineQtyChange = R.curry((index, _id, value) => {
+    const qty = Number.parseInt(value) || 0
+    console.log(qty)
+    console.log(data[index].qty)
+    if (qty === data[index].qty ) { // remove the change in deference to the origional data
+      console.log('got here')
+      setChangesInProgresss(R.omit([_id], changesInProgresss))
+    } else {
+      const newChangesInProgresss = { [_id]: { _id, qty } }
+      setChangesInProgresss({
+        ...changesInProgresss,
+        ...newChangesInProgresss
+      })
+    }
+    
   })
 
+  // after data refresh, clean changesInProgresss of any deleted data
   React.useEffect(() => {
-    setFormData(data)
+    if (!R.isNil(data)) {
+      const filteredChangesInProgress = R.filter(
+        (item) => { !data.some((element) => element._id === item._id) },
+        changesInProgresss
+      )
+      setChangesInProgresss(filteredChangesInProgress)
+    }
   }, [data])
 
+  const MainSection = () => {
+    if (error) {
+      return (
+        <Box>
+          <Text color='red'>Error Loading data:</Text>
+          <Text color='red'>{error}</Text>
+        </Box>
+      )
+    }
+
+    if (data) {
+      return (
+        <Stack>
+          {data.map((paint, index) => (
+            <EditRow
+              key={paint._id}
+              paint={paint}
+              qty={changesInProgresss[paint._id]?.qty || paint.qty}
+              highlightQty={!R.isNil(changesInProgresss[paint._id])}
+              handleLineQtyChange={handleLineQtyChange(index, paint._id)}
+              refresh={refresh}
+            />
+          ))}
+        </Stack>
+      )
+    }
+
+    return (
+      <Box>
+        <SpinnerBox />
+      </Box>
+    )
+  }
 
   return (
     <Box p={4}>
@@ -98,7 +116,7 @@ function Edit(props) {
       <Box paddingTop={4}>
         <ButtonRow>
           <NewPaintModal
-            formData={formData}
+            data={data}
             refresh={refresh}
           />
         </ButtonRow>
@@ -119,7 +137,7 @@ function Edit(props) {
             colorScheme='green'
             variant='outline'
             onClick={handleSave}
-            isDisabled={!formData}
+            isDisabled={R.isEmpty(changesInProgresss)}
           >
             Save
           </Button>

@@ -32,12 +32,12 @@ const {
 } = process.env
 
 function NewPaintModal(props) {
-  const { formData, refresh } = props
+  const { data, refresh } = props
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [paint, setPaint] = React.useState({ qty: 0, colour: '' })
   
-  const nameTakenError = formData && formData.map((p) => p.colour).includes(paint.colour)
-  const disableSave = !formData || nameTakenError || paint.colour === ''
+  const nameTakenError = data && data.map((p) => p.colour).includes(paint.colour)
+  const disableSave = !data || nameTakenError || paint.colour === ''
 
   function clearEntry() {
     setPaint({ qty: 0, colour: '' })
@@ -88,7 +88,7 @@ function NewPaintModal(props) {
         colorScheme='green'
         variant='outline'
         onClick={onOpen}
-        isDisabled={!formData}
+        isDisabled={!data}
       />
       <Modal isOpen={isOpen} onClose={handleCancel}>
         <ModalOverlay />
@@ -155,7 +155,7 @@ function NewPaintModal(props) {
 }
 
 NewPaintModal.propTypes = {
-  formData: PropTypes.array,
+  data: PropTypes.array,
   refresh: PropTypes.func
 }
 
