@@ -49,7 +49,6 @@ function Edit(props) {
   const handleLineQtyChange = R.curry((index, _id, value) => {
     const qty = Number.parseInt(value) || 0
     if (qty === data[index].qty ) { // remove the change in deference to the original data
-      console.log('got here')
       setChangesInProgress(R.omit([_id], changesInProgress))
     } else {
       const newChangesInProgress = { [_id]: { _id, qty } }
@@ -58,8 +57,14 @@ function Edit(props) {
         ...newChangesInProgress
       })
     }
-    
   })
+
+  const lineGetQty = (index, _id) => {
+    if (!R.isNil(changesInProgress[_id]?.qty)) {
+      return changesInProgress[_id]?.qty
+    }
+    return data[index].qty
+  }
 
   // after data refresh, clean changesInProgress of any deleted data
   React.useEffect(() => {
@@ -92,7 +97,7 @@ function Edit(props) {
             <EditRow
               key={paint._id}
               paint={paint}
-              qty={changesInProgress[paint._id]?.qty || paint.qty}
+              qty={lineGetQty(index, paint._id) }
               highlightQty={!R.isNil(changesInProgress[paint._id])}
               handleLineQtyChange={handleLineQtyChange(index, paint._id)}
               refresh={refresh}
