@@ -1,70 +1,213 @@
-# Getting Started with Create React App
+# A Paint Company
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An app with kanban style lanes for keeping track of paint inventory.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+1. kanban view of paints with their quantites
+2. Paints are automatically placed in Kanban lanes based on quantity of stock
+3. kanban reflows from horizontal to vertical for small screen devices
+2. edit paint quantities
+3. delete paints
+4. add new paints
 
-### `npm start`
+## The next features to add
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. authentication
+2. user management
+3. backend validation
+4. an edit page for swim lane settings
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Design
 
-### `npm test`
+This is a backend for frontend React + Node app deployed to Heroku.  The database is MongoDB. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Database model
 
-### `npm run build`
+* paints
+  * _id
+  * colour
+  * quantity
+* settings
+  * _id
+  * swim_lanes[]
+    * name
+    * min_qty
+    * max_qty
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The settings collection has only one document which stores the settings for the swim lanes.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Paint doc example**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```json 
+{  
+  "_id": "62869a88e02d28f0a0407e55",  "qty": 0,  
+  "colour": "Blue"
+}
+```
 
-### `npm run eject`
+**Settings doc example**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```json 
+{
+  "_id": "62869a451ce5add2c2aaffe5",
+  "swim_lanes": [
+    {
+      "name": "Available",
+      "min_qty": 10
+    },
+    {
+      "name": "Running Low",
+      "min_qty": 1,
+      "max_qty": 9
+    },
+    {
+      "name": "Out of Stock",
+      "max_qty": 0
+    }
+  ]
+}
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### API endpoints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Path | Method | Body | Response |
+| --- | --- | --- | --- |
+| `/api/paints` | POST | list of paints | na |
+| `/api/paints` | GET | na | list of paints |
+| `/api/paints` | PUT | list of paints. Only `_id` and attributes being changed are required | na |
+| `/api/paints/id` | DELETE | na | na |
+| `/api/lanes` | GET | na | list of swim lanes: each lane has a list of paints. |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+For the kanban, the get lanes API endpoint constructs the lanes using the settings document and the paints collection.
 
-## Learn More
+**Get lanes: response body example**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```json
+[
+    {
+        "name": "Available",
+        "min_qty": 10,
+        "paints": [
+            {
+                "_id": "62869acce02d28f0a0407e57",
+                "qty": 10,
+                "colour": "Black"
+            }
+        ]
+    },
+    {
+        "name": "Running Low",
+        "min_qty": 1,
+        "max_qty": 9,
+        "paints": [
+            {
+                "_id": "62869afee02d28f0a0407e59",
+                "qty": 1,
+                "colour": "Purple"
+            },
+            {
+                "_id": "62869ae0e02d28f0a0407e58",
+                "qty": 5,
+                "colour": "White"
+            },
+            {
+                "_id": "62869aa9e02d28f0a0407e56",
+                "qty": 9,
+                "colour": "Grey"
+            }
+        ]
+    },
+    {
+        "name": "Out of Stock",
+        "max_qty": 0,
+        "paints": [
+            {
+                "_id": "62869a88e02d28f0a0407e55",
+                "qty": 0,
+                "colour": "Blue"
+            }
+        ]
+    }
+]
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Get paints: response body example**
 
-### Code Splitting
+```json
+[
+    {
+        "_id": "62869acce02d28f0a0407e57",
+        "qty": 10,
+        "colour": "Black"
+    },
+    {
+        "_id": "62869a88e02d28f0a0407e55",
+        "qty": 0,
+        "colour": "Blue"
+    },
+    {
+        "_id": "62869aa9e02d28f0a0407e56",
+        "qty": 9,
+        "colour": "Grey"
+    },
+    {
+        "_id": "62869afee02d28f0a0407e59",
+        "qty": 1,
+        "colour": "Purple"
+    },
+    {
+        "_id": "62869ae0e02d28f0a0407e58",
+        "qty": 5,
+        "colour": "White"
+    }
+]
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Frontend component tree
 
-### Analyzing the Bundle Size
+* ChakraProvider
+  * App
+    * Router
+      * WithData
+        * Home
+          * SpinnerBox
+          * KanbanStack
+            * LaneCard
+              * PaintCard
+      * WithData
+        * Edit
+          * SpinnerBox
+          * NewPaintModal
+          * EditRow
+          *   DeletePaintDialog
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
+## Installation and deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Create a mongo database.
 
-### Advanced Configuration
+Install node modules with `npm install`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+In the project root folder, create the file `.env.local` with the following:
 
-### Deployment
+```
+MONGO_URI="your-mongo-connection-string"
+MONGO_DB="your-mongo-database"
+STAGE="dev"
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The commands to run the application are in the package.json file:
 
-### `npm run build` fails to minify
+`npm run dev` to run both the server and the React app locally.
+`npm run local` to run only the server locally.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To set up a Heroku app to deploy to and the Heroku CLI, follow instructions on Heroku:
+https://devcenter.heroku.com/articles/git
+
+Add the config variables `MONGO_URI` and `MONGO_DB` to you Heroku app.
+
+`git push heroku main` to deploys latest changes in git to the Heroku app.  
+
+No additionally configuration is required.  Heroku will detect that it is a node application, and will automatically run `npm build` then `npm start`.
+
