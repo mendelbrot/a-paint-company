@@ -36,7 +36,10 @@ function NewPaintModal(props) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [paint, setPaint] = React.useState({ qty: 0, colour: '' })
   
-  const nameTakenError = data && data.map((p) => p.colour).includes(paint.colour)
+  const nameTakenError = data && data.map(
+    (p) => p.colour.toLowerCase()
+  ).includes(paint.colour.toLowerCase())
+  
   const disableSave = !data || nameTakenError || paint.colour === ''
 
   function clearEntry() {
