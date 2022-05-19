@@ -25,34 +25,43 @@ function EditRow(props) {
   return (
     <Box maxWidth={600}>
       <Flex
-        p={2}
         direction='row'
+        p={2}
         border='1px'
         rounded='lg'
-        align='center'
+        align={{ base: 'top', sm: 'center' }}
       >
         <DeletePaintDialog
           paint={paint}
           refresh={refresh}
         />
-        <Heading size='md'>{paint.colour}</Heading>
-        <Spacer />
-        <NumberInput
-          precision={0}
-          min={0}
-          value={qty}
-          onChange={(value) => handleLineQtyChange(value)}
+        <Flex
+          direction={{ base: 'column', sm: 'row' }}
+          align={{ base: 'top', sm: 'center' }}
+          grow={1}
         >
-          <NumberInputField
-            backgroundColor={highlightQty ? 'lightYellow' : 'white'}
-          />
-          <NumberInputStepper
-            backgroundColor='white'
+          <Heading
+            size='md'
+            paddingBottom={{ base: 2, sm: 0 }}
+          >{paint.colour}</Heading>
+          <Spacer />
+          <NumberInput
+            precision={0}
+            min={0}
+            value={qty}
+            onChange={(value) => handleLineQtyChange(value)}
           >
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
+            <NumberInputField
+              backgroundColor={highlightQty ? 'lightYellow' : 'white'}
+            />
+            <NumberInputStepper
+              backgroundColor='white'
+            >
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+        </Flex>
       </Flex>
     </Box>
   )
