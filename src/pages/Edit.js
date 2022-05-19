@@ -25,12 +25,12 @@ function Edit(props) {
   const { error, data, refresh } = props
   const navigate = useNavigate()
 
-  const [changesInProgresss, setChangesInProgresss] = React.useState({}) 
+  const [changesInProgress, setChangesInProgress] = React.useState({}) 
 
   function handleSave() {
     fetch(REACT_APP_API_URL + '/paints', {
       method: 'PUT',
-      body: JSON.stringify(Object.values(changesInProgresss)),
+      body: JSON.stringify(Object.values(changesInProgress)),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -48,29 +48,30 @@ function Edit(props) {
 
   const handleLineQtyChange = R.curry((index, _id, value) => {
     const qty = Number.parseInt(value) || 0
-    console.log(qty)
-    console.log(data[index].qty)
-    if (qty === data[index].qty ) { // remove the change in deference to the origional data
+    if (qty === data[index].qty ) { // remove the change in deference to the original data
       console.log('got here')
-      setChangesInProgresss(R.omit([_id], changesInProgresss))
+      setChangesInProgress(R.omit([_id], changesInProgress))
     } else {
-      const newChangesInProgresss = { [_id]: { _id, qty } }
-      setChangesInProgresss({
-        ...changesInProgresss,
-        ...newChangesInProgresss
+      const newChangesInProgress = { [_id]: { _id, qty } }
+      setChangesInProgress({
+        ...changesInProgress,
+        ...newChangesInProgress
       })
     }
     
   })
 
-  // after data refresh, clean changesInProgresss of any deleted data
+  // after data refresh, clean changesInProgress of any deleted data
   React.useEffect(() => {
-    if (!R.isNil(data)) {
+    if (data) {
+      const filterFunction = item => {
+        return data.some((element) => element._id === item._id)
+      }
       const filteredChangesInProgress = R.filter(
-        (item) => { !data.some((element) => element._id === item._id) },
-        changesInProgresss
+        filterFunction,
+        changesInProgress
       )
-      setChangesInProgresss(filteredChangesInProgress)
+      setChangesInProgress(filteredChangesInProgress)
     }
   }, [data])
 
@@ -91,8 +92,8 @@ function Edit(props) {
             <EditRow
               key={paint._id}
               paint={paint}
-              qty={changesInProgresss[paint._id]?.qty || paint.qty}
-              highlightQty={!R.isNil(changesInProgresss[paint._id])}
+              qty={changesInProgress[paint._id]?.qty || paint.qty}
+              highlightQty={!R.isNil(changesInProgress[paint._id])}
               handleLineQtyChange={handleLineQtyChange(index, paint._id)}
               refresh={refresh}
             />
@@ -137,7 +138,7 @@ function Edit(props) {
             colorScheme='green'
             variant='outline'
             onClick={handleSave}
-            isDisabled={R.isEmpty(changesInProgresss)}
+            isDisabled={R.isEmpty(changesInProgress)}
           >
             Save
           </Button>
